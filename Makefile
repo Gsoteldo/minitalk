@@ -6,7 +6,7 @@
 #    By: gsoteldo <gsoteldo@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/21 20:53:47 by gsoteldo          #+#    #+#              #
-#    Updated: 2024/02/29 21:09:56 by gsoteldo         ###   ########.fr        #
+#    Updated: 2024/03/04 18:14:54 by gsoteldo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -46,6 +46,7 @@ clean:
 
 fclean: clean
 	rm -f client server
+	@make fclean -C libft
 	@echo "$(RED)-----------------Borrado cliente y/o servidor-----------------$(NC)"
 
 re: fclean all

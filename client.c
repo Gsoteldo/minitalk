@@ -6,13 +6,29 @@
 /*   By: gsoteldo <gsoteldo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/21 20:53:16 by gsoteldo          #+#    #+#             */
-/*   Updated: 2024/02/29 20:57:23 by gsoteldo         ###   ########.fr       */
+/*   Updated: 2024/03/04 18:17:46 by gsoteldo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft/libft.h"
 #include <signal.h>
 
+#define RED "\x1b[31m"
+#define RESET "\x1b[0m"
+#define BLUE "\x1b[34m"
+
+/**
+ * @brief Función de controlador de señal.
+ *
+ * Esta función se encarga de manejar las señales recibidas por el programa
+ * cliente.
+ * 
+ * Si la señal recibida es SIGUSR1, incrementa el contador interno.
+ * Si la señal recibida es diferente a SIGUSR1, imprime el valor actual del
+ * contador y finaliza el programa.
+ *
+ * @param sig La señal recibida.
+ */
 static void	handler(int sig)
 {
 	static int		count;
@@ -21,11 +37,25 @@ static void	handler(int sig)
 		++count;
 	else
 	{
-		ft_printf("%d\n", count);
+		if (count)
+		{
+			ft_printf(BLUE "\nMensaje recibido correctamente ");
+			ft_printf("(%d bits)\n" RESET, count);
+		}
 		exit(0);
 	}
 }
 
+/**
+ * @brief Envía un mensaje utilizando señales.
+ *
+ * Esta función envía un mensaje utilizando señales. Toma como argumentos
+ * el identificador de la señal y el puntero a la cadena de caracteres que
+ * se desea enviar.
+ *
+ * @param signal El identificador de la señal.
+ * @param str El puntero a la cadena de caracteres a enviar.
+ */
 static void	send_message(int signal, char *str)
 {
 	int		j;
@@ -52,21 +82,20 @@ static void	send_message(int signal, char *str)
 	}
 }
 
-
-int main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
 	int		pid;
 	char	*str;
-	//recieve the pid of the server
+
 	if (argc != 3 || !ft_strlen(argv[2]))
 	{
-		ft_printf("Se necesita este formato: ./client [server_pid] \"Message\"\n");
+		ft_putstr_fd("\x1b[31m" "ERROR! " "\x1b[0m", 2);
+		ft_putstr_fd("Se necesita este formato: \n", 2);
+		ft_putstr_fd("\n\t./client [server_pid] \"Mensaje\"\n\n", 2);
 		return (1);
 	}
 	pid = atoi(argv[1]);
 	str = argv[2];
-	ft_printf("Enviado: %d\n", ft_strlen(argv[2]));
-	ft_printf("Recibido: \n");
 	signal(SIGUSR2, handler);
 	signal(SIGUSR1, handler);
 	send_message(pid, str);
@@ -74,25 +103,3 @@ int main(int argc, char **argv)
 		pause();
 	return (0);
 }
-
-/*int main(int argc, char **argv)
-{
-	int		pid;
-	char	*str;
-	//recieve the pid of the server
-	if (argc != 3 || ft_strlen(argv[2]) == 0)
-	{
-		ft_printf("Se necesita este formato: ./client [server_pid] \"Message\"\n");
-		return (1);
-	}
-	pid = atoi(argv[1]);
-	str = argv[2];
-	ft_printf("Enviado: %d\n", ft_strlen(argv[2]));
-	ft_printf("Recibido: \n");
-	signal(SIGUSR1, handler);
-	signal(SIGUSR2, handler);
-	send_message(pid, str);
-	while (1)
-		pause();
-	return (0);
-}*/
