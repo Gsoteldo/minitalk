@@ -6,7 +6,7 @@
 #    By: gsoteldo <gsoteldo@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/25 19:34:12 by gsoteldo          #+#    #+#              #
-#    Updated: 2024/02/22 18:54:00 by gsoteldo         ###   ########.fr        #
+#    Updated: 2024/03/05 17:27:24 by gsoteldo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -79,10 +79,10 @@ play: $(NAME)
 all: $(NAME)
 
 clean:
-	rm -f $(OBJ) $(BONUS_OBJ)
+	@rm -f $(OBJ) $(BONUS_OBJ)
 
 fclean: clean
-	rm -f $(NAME)
+	@rm -f $(NAME)
 
 re: fclean all
 

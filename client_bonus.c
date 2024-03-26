@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   client.c                                           :+:      :+:    :+:   */
+/*   client_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gsoteldo <gsoteldo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/05 17:59:05 by gsoteldo          #+#    #+#             */
-/*   Updated: 2024/03/26 17:14:17 by gsoteldo         ###   ########.fr       */
+/*   Created: 2024/02/21 20:53:16 by gsoteldo          #+#    #+#             */
+/*   Updated: 2024/03/12 21:15:32 by gsoteldo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,21 +17,37 @@
 
 /*Colores 
 	RED: "\x1b[31m"
+	BLUE "\x1b[34m"
 */
 
-static int checker(char	**str)
+/**
+ * @brief Función de controlador de señal.
+ *
+ * Esta función se encarga de manejar las señales recibidas por el programa
+ * cliente.
+ * 
+ * Si la señal recibida es SIGUSR1, incrementa el contador interno.
+ * Si la señal recibida es diferente a SIGUSR1, imprime el valor actual del
+ * contador y finaliza el programa.
+ *
+ * @param sig La señal recibida.
+ */
+static void	handler(int sig)
 {
-	int flag;
-	int i;
+	static int		count;
 
-	i = 0;
-	flag = 1;
-	while (str[1][i])
-		if (ft_isdigit(str[1][i++]) == 0)
-			flag = 0;
-	return (flag);
+	if (sig == SIGUSR1)
+		++count;
+	else
+	{
+		if (count)
+		{
+			ft_printf("\x1b[34m" "\nMensaje recibido correctamente ");
+			ft_printf("(%d bits)\n" RC, count);
+		}
+		exit(0);
+	}
 }
-
 
 /**
  * @brief Envía un mensaje utilizando señales.
@@ -69,15 +85,19 @@ static void	send_message(int signal, char *str)
 	}
 }
 
-
 int	main(int argc, char **argv)
 {
 	int		pid;
 	char	*str;
+	int		flag;
 	int		i;
 
 	i = 0;
-	if (argc != 3 || !ft_strlen(argv[2]) || checker(argv) == 0)
+	flag = 1;
+	while (argv[1][i])
+		if (ft_isdigit(argv[1][i++]) == 0)
+			flag = 0;
+	if (argc != 3 || !ft_strlen(argv[2]) || flag == 0)
 	{
 		ft_putstr_fd("\x1b[31m" "ERROR! " RC, 2);
 		ft_putstr_fd("This format is needed: \n", 2);
@@ -86,6 +106,10 @@ int	main(int argc, char **argv)
 	}
 	pid = atoi(argv[1]);
 	str = argv[2];
+	signal(SIGUSR2, handler);
+	signal(SIGUSR1, handler);
 	send_message(pid, str);
+	while (1)
+		pause();
 	return (0);
 }
